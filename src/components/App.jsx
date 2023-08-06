@@ -10,8 +10,14 @@ export default function App() {
   const [searchName, setSearchName] = useState('');
   const [images, setImages] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  // const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!searchName) {
+      return;
+    }
+    addImages();
+  }, [searchName, currentPage]);
 
   const addImages = async () => {
     try {
@@ -37,11 +43,6 @@ export default function App() {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    addImages();
-  }, [searchName, currentPage, addImages]);
-
   const loadMore = () => {
     setCurrentPage(prevState => prevState + 1);
   };
