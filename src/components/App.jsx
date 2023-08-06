@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import * as API from '../services/PixabayApi';
 import SearchBar from './Searchbar/SearchBar';
 import ImageGallery from '../components/ImageGallery/ImageGallery';
@@ -6,30 +6,12 @@ import Button from '../components/Button/Button';
 import { Audio } from 'react-loader-spinner';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-const App = () => {
+export default function App() {
   const [searchName, setSearchName] = useState('');
   const [images, setImages] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    // Reset images when searchName changes
-    setImages([]);
-    setCurrentPage(1);
-  }, [searchName]);
-
-  useEffect(() => {
-    addImages();
-  }, [currentPage]);
-
-  const loadMore = () => {
-    setCurrentPage(prevPage => prevPage + 1);
-  };
-
-  const handleSubmit = query => {
-    setSearchName(query);
-  };
 
   const addImages = async () => {
     try {
@@ -45,15 +27,29 @@ const App = () => {
 
       const normalizedImages = API.normalizedImages(data.hits);
 
-      setImages(prevImages => [...prevImages, ...normalizedImages]);
+      setImages([...images, ...normalizedImages]);
       setIsLoading(false);
-      setError('');
+      // setError('');
     } catch (error) {
-      setError('Something went wrong!');
+      // setError('Something went wrong!');
       return Notify.failure('Something went wrong!');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
+    addImages();
+  }, [searchName, currentPage, addImages]);
+
+  const loadMore = () => {
+    setCurrentPage(prevState => prevState + 1);
+  };
+
+  const handleSubmit = query => {
+    setSearchName(query);
+    setImages([]);
+    setCurrentPage(1);
   };
 
   return (
@@ -72,6 +68,4 @@ const App = () => {
       {images.length > 0 && !isLoading && <Button onClick={loadMore} />}
     </div>
   );
-};
-
-export default App;
+}
