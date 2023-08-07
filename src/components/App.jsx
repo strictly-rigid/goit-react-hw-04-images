@@ -17,6 +17,7 @@ export default function App() {
       return;
     }
     addImages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchName, currentPage]);
 
   const addImages = async () => {
